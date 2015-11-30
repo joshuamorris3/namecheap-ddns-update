@@ -10,13 +10,15 @@ update() {
       echo "Registering subdomain: $SUBDOMAIN.$DOMAIN, to IP address: $IP"
       URL="$BASE_URL&host=$SUBDOMAIN"
       RESP="$(curl --silent --connect-timeout 10 $URL)"
-      # echo $RESP
-      ERROR="$(echo -e $RESP | gawk '{ match($0, /<ErrCount>(.*)<\/ErrCount>.+<Err1>(.*)<\/Err1>/, arr); if (arr[1] > 0 ) print arr[2] }')"
-      if [ "$ERROR" ]; then
-        echo "ERROR : $ERROR"
+      error_msg="$(echo -e $RESP | gawk '{ match($0, /<ErrCount>(.*)<\/ErrCount>.+<Err1>(.*)<\/Err1>/, arr); if (arr[1] > 0 ) print arr[2] }')"
+      if [ "$error_msg" ]; then
+        echo "ERROR : $error_msg"
         if [ "$EXIT_ON_ERROR" = true ]; then
           exit 1
         fi
+      else
+        new_ip="$(echo -e $RESP | gawk '{ match($0, /<IP>(.*)<\/IP>/, arr); if (arr[1] != "" ) print arr[1] }')"
+        echo "$SUBDOMAIN.$DOMAIN IP address updated to: $new_ip"
       fi
     done
   done <<< "$SUBDOMAINS"
