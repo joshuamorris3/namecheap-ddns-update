@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# for a domain you own hosted at namecheap, register one or more subdomains
+# to an IP address in namecheaps dynamicdns system
+
+# Update the domain subdomains
+update() {
+  while IFS=',' read -ra SUBDOMAIN_ARRAY; do
+    for raw_subdomain in "${SUBDOMAIN_ARRAY[@]}"; do
+      SUBDOMAIN="$(echo -e $raw_subdomain | tr -d '[[:space:]]')"
+      echo "Registering subdomain: $SUBDOMAIN.$DOMAIN, to IP address: $IP"
+      URL="$BASE_URL&host=$SUBDOMAIN"
+      RESP="$(curl --silent --connect-timeout 10 $URL)"
+      # echo $RESP
+      ERROR="$(echo -e $RESP | gawk '{ match($0, /<ErrCount>(.*)<\/ErrCount>.+<Err1>(.*)<\/Err1>/, arr); if (arr[1] > 0 ) print arr[2] }')"
+      if [ "$ERROR" ]; then
+        echo "ERROR : $ERROR"
+        if [ "$EXIT_ON_ERROR" = true ]; then
+          exit 1
+        fi
+      fi
+    done
+  done <<< "$SUBDOMAINS"
+ }
+
+# Usage info
+show_help() {
+cat << EOF
+
+Usage: ${0##*/} [-h] [-e] [-d DOMAIN] [-s SUBDOMAINS] [-i IP]
+Update the IP address of one or more subdomains, of a domain you own at
+namecheap.com. This can only update an existing A record, it cannot create
+a new A record. Use namecheap's advanced DNS settings for your domain to
+create A records. The args d, s and i have corresponding ENV options. The
+Dynamice DNS Password has to be set with the NC_DDNS_PASS environment variable.
+
+    -h             display this help and exit
+    -e             exit if any call to update a subdomains IP address fails
+    -d DOMAIN      the domain that has one or more subdomains (A records)
+    -s SUBDOMAINS  comma separated list of subdomains (A records) to update
+    -i IP          IP address to set the subdomain(s) to. If blank namecheap
+                   will use the callers public IP address.
+
+EOF
+}
+
+# Check and set the password
+# : "${NC_DDNS_PASS:?Need to set the Dynamic DNS Password}"
+PASS=$NC_DDNS_PASS
+
+EXIT_ON_ERROR=false
+
+OPTIND=1 # Reset is necessary if getopts was used previously in the script.  It is a good idea to make this local in a function.
+while getopts "hd:s:i:e" opt; do
+  case "$opt" in
+    h)
+        show_help
+        exit 0
+        ;;
+    d)  DOMAIN=$OPTARG
+        ;;
+    s)  SUBDOMAINS=$OPTARG
+        ;;
+    i)  IP=$OPTARG
+        ;;
+    e)  EXIT_ON_ERROR=true
+        ;;
+    '?')
+        show_help >&2
+        exit 1
+        ;;
+  esac
+done
+shift "$((OPTIND-1))" # Shift off the options and optional --.
+
+# Create the static URL
+BASE_URL="https://dynamicdns.park-your-domain.com/update?domain=$DOMAIN&password=$PASS&ip=$IP"
+
+update
+
