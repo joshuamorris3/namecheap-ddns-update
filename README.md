@@ -1,11 +1,16 @@
 # namecheap-ddns-update
-Update the IP address of your (namecheap.com)[namecheap.com] Dynamic DNS A records.
+Update the IP address of your [namecheap.com](namecheap.com) Dynamic DNS A records.
 
 ## Overview
+Use this to update the IP address of A records for a domain that is hosted by [namecheap.com](namecheap.com). If you created one or more A records using [namecheap.com](namecheap.com) Dynamic DNS, then this will update the IP address to:
+* The IP address you pass in as an argument using -i
+* Or, if the -i is omitted or left blank, the IP address seen by [namecheap.com](namecheap.com)'s servers when you run this script. If you run this from within your network, then the externally visible IP address is used by [namecheap.com](namecheap.com) to update the A record value. If you have a server with a public IP address, then this utility can be run from that server and -i can be omitted.
 
 ## Running it
 
-Check the help (-h) for details. Basic usages is as follows:
+Check the help (-h) for details. The one argument that must be set as an environment variable is NC_DDNS_PASS. The Dynamic DNS Password from [namecheap.com](namecheap.com)'s dashboard -> Advanced DNS page for the domain with the A records you want to update.
+
+Basic usages is as follows:
 ```
 Usage: namecheap-ddns-update [-h] [-e] [-d DOMAIN] [-s SUBDOMAINS] [-i IP]
 Update the IP address of one or more subdomains, of a domain you own at
