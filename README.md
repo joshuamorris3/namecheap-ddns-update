@@ -40,3 +40,16 @@ This example runs every hour (1h) to update the IP address to the callers public
 ```
 ./namecheap-ddns-update -d example.com -s "abc,xyz" -t 1h
 ```
+
+### Docker
+You can also run this from within a Docker container.
+
+Build your namecheap-ddns-update docker image
+```
+docker build -t namecheap-ddns-update -f Dockerfile .
+```
+
+Run the image you just built, passing in the environment variables to configure the script
+```
+docker run -e "NC_DDNS_PASS=123456" -e "DOMAIN=example.com" -e "SUBDOMAINS=abc,xyz" -e "INTERVAL=10s" -d --name nc-ddns namecheap-ddns-update
+```
