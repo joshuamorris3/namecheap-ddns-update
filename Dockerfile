@@ -10,4 +10,5 @@ ADD namecheap-ddns-update /
 RUN chmod 744 /namecheap-ddns-update
 
 # This script registers subdomains to a domain you own and hosted by namecheap
-CMD ["/namecheap-ddns-update"]
+ENTRYPOINT ["/namecheap-ddns-update"]
+CMD ["-h"]
