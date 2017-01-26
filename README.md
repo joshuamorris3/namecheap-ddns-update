@@ -8,7 +8,7 @@ Use this to update the IP address of A records for a domain that is hosted by [n
 
 ## Running it
 
-Check the help (-h) for details. The one argument that must be set as an environment variable is NC_DDNS_PASS. The Dynamic DNS Password from [namecheap.com](namecheap.com)'s dashboard -> Advanced DNS page for the domain with the A records you want to update.
+Check the help (-h) for details. The one argument that can only be set as an environment variable is NC_DDNS_PASS. The Dynamic DNS Password from [namecheap.com](namecheap.com)'s dashboard -> Advanced DNS page for the domain with the A records you want to update.
 
 You can set the arguments in one or a combination of the following ways:
 
