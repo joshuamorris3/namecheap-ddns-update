@@ -24,6 +24,9 @@ namecheap.com. This can only update an existing A record, it cannot create
 a new A record. Use namecheap's advanced DNS settings for your domain to
 create A records. The args d, s and i have corresponding ENV options. The
 Dynamice DNS Password has to be set with the NC_DDNS_PASS environment variable.
+You could also create an environment file in the user directory running this
+script called .namecheap-ddns-update. This file is sourced if it is found and
+is readable e.g. source ~/.namecheap-ddns-update
 
     -h             display this help and exit
     -e             exit if any call to update a subdomains IP address fails
