@@ -10,6 +10,11 @@ Use this to update the IP address of A records for a domain that is hosted by [n
 
 Check the help (-h) for details. The one argument that must be set as an environment variable is NC_DDNS_PASS. The Dynamic DNS Password from [namecheap.com](namecheap.com)'s dashboard -> Advanced DNS page for the domain with the A records you want to update.
 
+You can set the arguments in one or a combination of the following ways:
+1. Pass them in on the command line
+2. Set them as environment variables e.g. export DOMAIN=domain.tld, or DOMAIN=domain.tld ./namecheap-ddns-update ....
+3. Create an environment file in the user directory running this script called .namecheap-ddns-update. This file is sourced if it is found and is readable e.g. source ~/.namecheap-ddns-update
+
 Basic usages is as follows:
 ```
 Usage: namecheap-ddns-update [-h] [-e] [-d DOMAIN] [-s SUBDOMAINS] [-i IP] [-t INTERVAL]
