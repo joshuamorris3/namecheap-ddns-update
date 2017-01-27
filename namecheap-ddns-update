@@ -59,11 +59,6 @@ EOF
 
 EXIT_ON_ERROR=false
 
-if [ $# -eq 0 ]; then
-  show_help >&2
-  exit 1
-fi
-
 OPTIND=1 # Reset is necessary if getopts was used previously in the script.  It is a good idea to make this local in a function.
 while getopts "hd:s:i:t:e" opt; do
   case "$opt" in
