@@ -18,7 +18,7 @@ update() {
       RESP="$(curl --silent --connect-timeout 10 $URL)"
       error_msg="$(echo -e $RESP | gawk '{ match($0, /<ErrCount>(.*)<\/ErrCount>.+<Err1>(.*)<\/Err1>/, arr); if (arr[1] > 0 ) print arr[2] }')"
       if [ "$error_msg" ]; then
-        echo "ERROR : $error_msg"
+        echo "ERROR : $error_msg" 1>&2;
         if [ "$EXIT_ON_ERROR" = true ]; then
           exit 1
         fi
