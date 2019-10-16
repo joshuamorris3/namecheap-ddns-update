@@ -3,7 +3,10 @@ GLOBIGNORE="*"
 # for a domain you own hosted at namecheap, register one or more subdomains
 # to an IP address in namecheaps dynamicdns system
 
-if [ -r ~/.namecheap-ddns-update ]; then
+if [ -r $(dirname "$0")/.env ]; then
+  echo "Sourcing .env file at the same dir"
+  source $(dirname "$0")/.env
+elif [ -r ~/.namecheap-ddns-update ]; then
   echo "Sourcing user ($USER) .namecheap-ddns-update file"
   source ~/.namecheap-ddns-update
 fi
@@ -42,7 +45,7 @@ create A records. The args d, s, i and t have corresponding ENV options. The
 Dynamice DNS Password has to be set with the NC_DDNS_PASS environment variable.
 You could also create an environment file in the user directory running this
 script called .namecheap-ddns-update. This file is sourced if it is found and
-is readable e.g. source ~/.namecheap-ddns-update
+is readable e.g. source ~/.namecheap-ddns-update or ./.env
 
     -h             display this help and exit
     -e             exit if any call to update a subdomains IP address fails
@@ -101,4 +104,3 @@ else
   # Run once and exit
   update
 fi
-

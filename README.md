@@ -14,7 +14,7 @@ You can set the arguments in one or a combination of the following ways:
 
 1. Pass them in on the command line
 2. Set them as environment variables e.g. export DOMAIN=domain.tld, or DOMAIN=domain.tld ./namecheap-ddns-update ....
-3. Create an environment file in the user directory running this script called .namecheap-ddns-update. This file is sourced if it is found and is readable e.g. source ~/.namecheap-ddns-update
+3. Create an environment file in the user directory running this script called .namecheap-ddns-update. This file is sourced if it is found and is readable e.g. source ~/.namecheap-ddns-update or ./.env
 
 Basic usages is as follows:
 ```
@@ -26,7 +26,7 @@ create A records. The args d, s and i have corresponding ENV options. The
 Dynamice DNS Password has to be set with the NC_DDNS_PASS environment variable.
 You could also create an environment file in the user directory running this
 script called .namecheap-ddns-update. This file is sourced if it is found and
-is readable e.g. source ~/.namecheap-ddns-update
+is readable e.g. source ~/.namecheap-ddns-update or ./.env
 
     -h             display this help and exit
     -e             exit if any call to update a subdomains IP address fails
