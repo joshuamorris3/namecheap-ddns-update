@@ -10,11 +10,12 @@ Use this to update the IP address of A records for a domain that is hosted by [n
 
 Check the help (-h) for details. The one argument that can only be set as an environment variable is NC_DDNS_PASS. The Dynamic DNS Password from [namecheap.com](namecheap.com)'s dashboard -> Advanced DNS page for the domain with the A records you want to update.
 
-You can set the arguments in one or a combination of the following ways:
+You can set the arguments in one of the following ways:
 
 1. Pass them in on the command line
 2. Set them as environment variables e.g. export DOMAIN=domain.tld, or DOMAIN=domain.tld ./namecheap-ddns-update ....
-3. Create an environment file in the user directory running this script called .namecheap-ddns-update. This file is sourced if it is found and is readable e.g. source ~/.namecheap-ddns-update or ./.env
+3. Create an environment file .env in the same directory as the script. This file is sourced if it is found and is readable e.g. source ./.env
+4. Create an environment file called .namecheap-ddns-update, in the directory of the user running this script. This file is sourced if it is found and is readable e.g. source ~/.namecheap-ddns-update
 
 Basic usages is as follows:
 ```
@@ -24,9 +25,10 @@ namecheap.com. This can only update an existing A record, it cannot create
 a new A record. Use namecheap's advanced DNS settings for your domain to
 create A records. The args d, s and i have corresponding ENV options. The
 Dynamice DNS Password has to be set with the NC_DDNS_PASS environment variable.
-You could also create an environment file in the user directory running this
-script called .namecheap-ddns-update. This file is sourced if it is found and
-is readable e.g. source ~/.namecheap-ddns-update or ./.env
+You could also create an environment file in the same directory as the script,
+called .env, or in directory of the user running this script, called
+.namecheap-ddns-update. The .env file is sourced first if found, if it does
+not exist, then .namecheap-ddns-update sourced if found.
 
     -h             display this help and exit
     -e             exit if any call to update a subdomains IP address fails
