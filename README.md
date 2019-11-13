@@ -53,6 +53,15 @@ This example runs every hour (1h) to update the IP address to the callers public
 ```
 
 ### Docker
+
+This docker container should be available from _gdunstone/namecheap-ddns-update_
+
+```
+docker run -e "NC_DDNS_PASS=123456" -e "DOMAIN=example.com" -e "SUBDOMAINS=abc,xyz" -e "INTERVAL=10s" -d --name nc-ddns gdunstone/namecheap-ddns-update
+```
+
+### Old docker instructions
+
 You can also run this from within a Docker container.
 
 Build your namecheap-ddns-update docker image

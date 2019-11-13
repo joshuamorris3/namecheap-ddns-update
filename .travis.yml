@@ -57,5 +57,6 @@ matrix:
           /tmp/scripts.sh push_readme
           ${TRAVIS_REPO_SLUG} README.md
           ${DOCKER_USERNAME} ${DOCKER_PASSWORD}
+          
 notifications:
   email: false
