@@ -1,6 +1,8 @@
 # namecheap-ddns-update
 Update the IP address of your [namecheap.com](namecheap.com) Dynamic DNS A records.
 
+[![Build Status](https://travis-ci.com/gdunstone/namecheap-ddns-update.svg?branch=master)](https://travis-ci.com/gdunstone/namecheap-ddns-update)
+
 ## Overview
 Use this to update the IP address of A records for a domain that is hosted by [namecheap.com](namecheap.com). If you created one or more A records using [namecheap.com](namecheap.com) Dynamic DNS, then this will update the IP address to:
 * The IP address you pass in as an argument using -i
