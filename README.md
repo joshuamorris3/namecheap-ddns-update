@@ -1,6 +1,8 @@
 # namecheap-ddns-update
 Update the IP address of your [namecheap.com](namecheap.com) Dynamic DNS A records.
 
+[![Build Status](https://travis-ci.com/gdunstone/namecheap-ddns-update.svg?branch=master)](https://travis-ci.com/gdunstone/namecheap-ddns-update)
+
 ## Overview
 Use this to update the IP address of A records for a domain that is hosted by [namecheap.com](namecheap.com). If you created one or more A records using [namecheap.com](namecheap.com) Dynamic DNS, then this will update the IP address to:
 * The IP address you pass in as an argument using -i
@@ -53,6 +55,15 @@ This example runs every hour (1h) to update the IP address to the callers public
 ```
 
 ### Docker
+
+This docker container should be available from _gdunstone/namecheap-ddns-update_
+
+```
+docker run -e "NC_DDNS_PASS=123456" -e "DOMAIN=example.com" -e "SUBDOMAINS=abc,xyz" -e "INTERVAL=10s" -d --name nc-ddns gdunstone/namecheap-ddns-update
+```
+
+### Old docker instructions
+
 You can also run this from within a Docker container.
 
 Build your namecheap-ddns-update docker image

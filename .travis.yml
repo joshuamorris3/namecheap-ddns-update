@@ -1,0 +1,62 @@
+dist: bionic
+os: linux
+language: shell
+
+services:
+  - docker
+
+env:
+  global:
+    - DOCKER_PLATFORMS="linux/amd64,linux/arm64,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6"
+
+git:
+  depth: 1
+
+before_install:
+  # Registering file format recognizers since RUN command is used
+  - sudo docker run --privileged linuxkit/binfmt:v0.7
+  # Get scripts for building Docker images
+  - id=$(docker create moikot/docker-tools)
+  - docker cp $id:/scripts.sh /tmp/scripts.sh && docker rm -v $id
+  # Update docker to the latest version and enable BuildKit
+  - /tmp/scripts.sh update_docker
+
+stages:
+  - name: build amd64
+    if: branch != master AND tag IS blank
+  - name: build and deploy master
+    if: branch = master AND tag IS blank
+  - name: build and deploy a version
+    if: tag =~ /^v[0-9]+\.[0-9]+\.[0-9]+$/
+
+matrix:
+  include:
+
+    - stage: build amd64
+      script:
+        - >-
+          /tmp/scripts.sh build_images
+          ${TRAVIS_REPO_SLUG} ${TRAVIS_COMMIT::6} linux/amd64
+    - stage: build and deploy master
+      script:
+        - >-
+          echo "${DOCKER_PASSWORD}" |
+          docker login -u "${DOCKER_USERNAME}" --password-stdin
+        - >-
+          /tmp/scripts.sh build_images
+          ${TRAVIS_REPO_SLUG} master ${DOCKER_PLATFORMS} --push
+    - stage: build and deploy a version
+      script:
+        - >-
+          echo "${DOCKER_PASSWORD}" |
+          docker login -u "${DOCKER_USERNAME}" --password-stdin
+        - >-
+          /tmp/scripts.sh build_images
+          ${TRAVIS_REPO_SLUG} ${TRAVIS_TAG} ${DOCKER_PLATFORMS} --push
+        - >-
+          /tmp/scripts.sh push_readme
+          ${TRAVIS_REPO_SLUG} README.md
+          ${DOCKER_USERNAME} ${DOCKER_PASSWORD}
+          
+notifications:
+  email: false
