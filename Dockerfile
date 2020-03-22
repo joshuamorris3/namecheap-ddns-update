@@ -1,4 +1,5 @@
 # Start from apline, a minimal docker image
+ARG BUILDPLATFORM
 FROM --platform=$BUILDPLATFORM alpine:latest
 
 # Add in SSL certificates for use with https, curl to call the update endpoint,
