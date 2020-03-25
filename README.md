@@ -16,7 +16,7 @@ You can set the arguments in one of the following ways:
 
 1. Pass them in on the command line
 2. Set them as environment variables e.g. export DOMAIN=domain.tld, or DOMAIN=domain.tld ./namecheap-ddns-update ....
-3. Create an environment file .env in the same directory as the script. This file is sourced if it is found and is readable e.g. source ./.env
+3. Create an environment file .env in the same directory as the script. This file is sourced if it is found and is readable e.g. source ./.env (the [.env.sample](.env.sample) provides an example)
 4. Create an environment file called .namecheap-ddns-update, in the directory of the user running this script. This file is sourced if it is found and is readable e.g. source ~/.namecheap-ddns-update
 
 Basic usages is as follows:
@@ -62,7 +62,16 @@ This docker container should be available from _joshuamorris3/namecheap-ddns-upd
 docker run -e "NC_DDNS_PASS=123456" -e "DOMAIN=example.com" -e "SUBDOMAINS=abc,xyz" -e "INTERVAL=10s" -d --name nc-ddns joshuamorris3/namecheap-ddns-update
 ```
 
-### Old docker instructions
+### Docker compose instructions
+
+Docker compose is a convienient way to start docker containers. The [docker-compose.yml](docker-compose.yml) provides an example, it uses a file called .env (see [.env.sample](.env.sample) for an example) to configure the namecheap-ddns-update process.
+
+To start the process using docker compose, simply run:
+```
+docker-compose up -d
+```
+
+### Local docker instructions
 
 You can also run this from within a Docker container.
 
