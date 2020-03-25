@@ -53,10 +53,12 @@ matrix:
         - >-
           /tmp/scripts.sh build_images
           ${TRAVIS_REPO_SLUG} ${TRAVIS_TAG} ${DOCKER_PLATFORMS} --push
-        - >-
-          /tmp/scripts.sh push_readme
-          ${TRAVIS_REPO_SLUG} README.md
-          ${DOCKER_USERNAME} ${DOCKER_PASSWORD}
-          
+          # Uploading the readme via the docker hub api is currently not supported
+          # See https://github.com/docker/hub-feedback/issues/1927
+          # - >-
+          # - /tmp/scripts.sh push_readme
+          # - ${TRAVIS_REPO_SLUG} README.md
+          # - ${DOCKER_USERNAME} ${DOCKER_PASSWORD}
+
 notifications:
   email: false
