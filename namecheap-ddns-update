@@ -11,26 +11,47 @@ elif [ -r ~/.namecheap-ddns-update ]; then
   source ~/.namecheap-ddns-update
 fi
 
-# Update the domain subdomains
-update() {
+update_ddns() {
+  RESP="$(curl --silent --connect-timeout 10 $1)"
+  error_msg="$(echo -e $RESP | gawk '{ match($0, /<ErrCount>(.*)<\/ErrCount>.+<Err1>(.*)<\/Err1>/, arr); if (arr[1] > 0 ) print arr[2] }')"
+  if [ "$error_msg" ]; then
+    echo "ERROR : $error_msg" 1>&2;
+    if [ "$EXIT_ON_ERROR" = true ]; then
+      exit 1
+    fi
+  else
+    new_ip="$(echo -e $RESP | gawk '{ match($0, /<IP>(.*)<\/IP>/, arr); if (arr[1] != "" ) print arr[1] }')"
+    echo "$2 IP address updated to: $new_ip"
+  fi
+}
+
+update_bare() {
+  echo "Registering bare domain: $DOMAIN, to IP address: $IP"
+  URL="$BASE_URL"
+  update_ddns $URL $DOMAIN
+}
+
+update_subdomains() {
   while IFS=',' read -ra SUBDOMAIN_ARRAY; do
     for raw_subdomain in "${SUBDOMAIN_ARRAY[@]}"; do
-      SUBDOMAIN="$(echo -e $raw_subdomain | tr -d '[[:space:]]')"
-      echo "Registering subdomain: $SUBDOMAIN.$DOMAIN, to IP address: $IP"
-      URL="$BASE_URL&host=$SUBDOMAIN"
-      RESP="$(curl --silent --connect-timeout 10 $URL)"
-      error_msg="$(echo -e $RESP | gawk '{ match($0, /<ErrCount>(.*)<\/ErrCount>.+<Err1>(.*)<\/Err1>/, arr); if (arr[1] > 0 ) print arr[2] }')"
-      if [ "$error_msg" ]; then
-        echo "ERROR : $error_msg" 1>&2;
-        if [ "$EXIT_ON_ERROR" = true ]; then
-          exit 1
-        fi
+      if [ $raw_subdomain == "@" ]; then
+        update_bare
       else
-        new_ip="$(echo -e $RESP | gawk '{ match($0, /<IP>(.*)<\/IP>/, arr); if (arr[1] != "" ) print arr[1] }')"
-        echo "$SUBDOMAIN.$DOMAIN IP address updated to: $new_ip"
+        SUBDOMAIN="$(echo -e $raw_subdomain | tr -d '[[:space:]]')"
+        echo "Registering subdomain: $SUBDOMAIN.$DOMAIN, to IP address: $IP"
+        URL="$BASE_URL&host=$SUBDOMAIN"
+        update_ddns $URL $SUBDOMAIN.$DOMAIN
       fi
     done
   done <<< "$SUBDOMAINS"
+}
+
+# Update the domain subdomains
+update() {
+  if [ -z $SUBDOMAINS ]; then
+    update_bare
+  fi
+  update_subdomains
  }
 
 # Usage info
@@ -38,11 +59,11 @@ show_help() {
 cat << EOF
 
 Usage: ${0##*/} [-h] [-e] [-d DOMAIN] [-s SUBDOMAINS] [-i IP] [-t INTERVAL]
-Update the IP address of one or more subdomains, of a domain you own at
-namecheap.com. This can only update an existing A record, it cannot create
-a new A record. Use namecheap's advanced DNS settings for your domain to
-create A records. The args d, s, i and t have corresponding ENV options. The
-Dynamice DNS Password has to be set with the NC_DDNS_PASS environment variable.
+Update the IP address of the bare domain and/or one or more subdomains, of a 
+domain you own at namecheap.com. This can only update an existing A record, it 
+cannot create a new A record. Use namecheap's advanced DNS settings for your 
+domain to create A records. The args d, s and i have corresponding ENV options.
+The Dynamice DNS Password has to be set with the NC_DDNS_PASS environment variable.
 You could also create an environment file in the same directory as the script,
 called .env, or in directory of the user running this script, called
 .namecheap-ddns-update. The .env file is sourced first if found, if it does
@@ -50,9 +71,11 @@ not exist, then .namecheap-ddns-update sourced if found.
 
     -h             display this help and exit
     -e             exit if any call to update a subdomains IP address fails
-    -d DOMAIN      the domain that has one or more subdomains (A records)
-    -s SUBDOMAINS  comma separated list of subdomains (A records) to update
-    -i IP          IP address to set the subdomain(s) to. If blank namecheap
+    -d DOMAIN      the domain that has a bare @ and/or one or more 
+                   subdomain A records
+    -s SUBDOMAINS  (optional) comma separated list of subdomains (A records) to update.
+                   If not set only the bare domain will be updated.
+    -i IP          (optional) IP address to set the subdomain(s) to. If not set namecheap
                    will use the callers public IP address.
     -t INTERVAL    set up a interval at which to run this. Uses bash sleep
                    format e.g. NUMBER[SUFFIX] where SUFFIX can be, s for
