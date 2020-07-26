@@ -22,11 +22,11 @@ You can set the arguments in one of the following ways:
 Basic usages is as follows:
 ```
 Usage: namecheap-ddns-update [-h] [-e] [-d DOMAIN] [-s SUBDOMAINS] [-i IP] [-t INTERVAL]
-Update the IP address of one or more subdomains, of a domain you own at
-namecheap.com. This can only update an existing A record, it cannot create
-a new A record. Use namecheap's advanced DNS settings for your domain to
-create A records. The args d, s and i have corresponding ENV options. The
-Dynamice DNS Password has to be set with the NC_DDNS_PASS environment variable.
+Update the IP address of the bare domain and/or one or more subdomains, of a 
+domain you own at namecheap.com. This can only update an existing A record, it 
+cannot create a new A record. Use namecheap's advanced DNS settings for your 
+domain to create A records. The args d, s and i have corresponding ENV options.
+The Dynamice DNS Password has to be set with the NC_DDNS_PASS environment variable.
 You could also create an environment file in the same directory as the script,
 called .env, or in directory of the user running this script, called
 .namecheap-ddns-update. The .env file is sourced first if found, if it does
@@ -34,9 +34,11 @@ not exist, then .namecheap-ddns-update sourced if found.
 
     -h             display this help and exit
     -e             exit if any call to update a subdomains IP address fails
-    -d DOMAIN      the domain that has one or more subdomains (A records)
-    -s SUBDOMAINS  comma separated list of subdomains (A records) to update
-    -i IP          IP address to set the subdomain(s) to. If blank namecheap
+    -d DOMAIN      the domain that has a bare @ and/or one or more 
+                   subdomain A records
+    -s SUBDOMAINS  (optional) comma separated list of subdomains (A records) to update.
+                   If not set only the bare domain will be updated.
+    -i IP          (optional) IP address to set the subdomain(s) to. If not set namecheap
                    will use the callers public IP address.
     -t INTERVAL    set up a interval at which to run this. Uses bash sleep
                    format e.g. NUMBER[SUFFIX] where SUFFIX can be, s for
@@ -52,6 +54,17 @@ This example would update the IP address to 127.0.0.1, for the two A records abc
 This example runs every hour (1h) to update the IP address to the callers public IP address, for the two A records abc and xyz under the domain example.com e.g. abc.mydomain.com and xyz.example.com. This is useful when you sit behind an IP address that can change e.g. home internet service provider who dynamically assigns you a public IP address
 ```
 ./namecheap-ddns-update -d example.com -s "abc,xyz" -t 1h
+```
+
+### Update the bare domain ("@" A record)
+If you only want to update your bare domain
+```
+./namecheap-ddns-update -d example.com -t 1h
+```
+
+If you want to update the bare domain and subdomains add "@" to the subdomain list
+```
+./namecheap-ddns-update -d example.com -s "@,abc,xyz" -t 1h
 ```
 
 ### Docker
